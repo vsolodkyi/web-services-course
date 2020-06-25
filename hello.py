@@ -8,3 +8,22 @@ def hello_world():
 
 if __name__ == '__main__':
     app.run()
+
+
+
+from markupsafe import escape
+
+@app.route('/user/<username>')
+def show_user_profile(username):
+    # show the user profile for that user
+    return 'User %s' % escape(username)
+
+def mean(numbers):
+    return float(sum(numbers))/ max(len(numbers), 1)
+
+@app.route('/<nums>')
+def mean_nums(nums):
+    nums = nums.split(',')
+    nums = [float(x) for x in nums]
+    print(nums)
+    return str(mean(nums))
