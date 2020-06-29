@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, abort, redirect, url_for
+from flask import Flask, request, jsonify, abort, redirect, url_for, render_template
 app = Flask(__name__)
 dict = {0: '<img src="/static/setosa.jpg" alt="Image">',
         1: '<img src="/static/versicolor.jpg" alt="Image">', 
@@ -23,7 +23,7 @@ def show_user_profile(username):
 def mean(numbers):
     return float(sum(numbers))/ max(len(numbers), 1)
 
-@app.route('/<nums>')
+#@app.route('/<nums>')
 def mean_nums(nums):
     nums = nums.split(',')
     nums = [float(x) for x in nums]
@@ -74,3 +74,28 @@ def add_message():
 
 def bad_request():
     return abort(400)
+
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, FileField
+from wtforms.validators import DataRequired
+from werkzeug.utils import secure_filename
+import os
+
+app.config['SECRET_KEY'] = 'any secret string'
+
+class MyForm(FlaskForm):
+    name = StringField('name', validators=[DataRequired()])
+    file = FileField()
+
+@app.route('/submit', methods=('GET', 'POST'))
+def submit():
+    form = MyForm()
+    if form.validate_on_submit():
+        f = form.file.data
+        filename=form.name.data + '.txt'
+        f.save(os.path.join(
+            filename
+        ))
+        return (str(form.name)) 
+    return render_template('submit.html', form=form)
