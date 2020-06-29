@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify, abort, redirect, url_for, render_template
+import pandas as pd
+
 app = Flask(__name__)
 dict = {0: '<img src="/static/setosa.jpg" alt="Image">',
         1: '<img src="/static/versicolor.jpg" alt="Image">', 
@@ -93,9 +95,14 @@ def submit():
     form = MyForm()
     if form.validate_on_submit():
         f = form.file.data
-        filename=form.name.data + '.txt'
-        f.save(os.path.join(
+        filename=form.name.data + '.csv'
+        """f.save(os.path.join(
             filename
-        ))
-        return (str(form.name)) 
+        ))"""
+        df = pd.read_csv(f, header = None)
+        pred = knn.predict(df)
+        result = pd.DataFrame(pred)
+        result.to_csv(filename, index = False)
+        print(pred)
+        return ('file uploaded') 
     return render_template('submit.html', form=form)
