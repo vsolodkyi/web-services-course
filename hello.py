@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, abort, redirect, url_for, render_template
+from flask import Flask, request, jsonify, abort, redirect, url_for, render_template, send_file
 import pandas as pd
 
 app = Flask(__name__)
@@ -104,5 +104,8 @@ def submit():
         result = pd.DataFrame(pred)
         result.to_csv(filename, index = False)
         print(pred)
-        return ('file uploaded') 
+        return send_file(filename,
+                     mimetype='text/csv',
+                     attachment_filename=filename,
+                     as_attachment=True)
     return render_template('submit.html', form=form)
